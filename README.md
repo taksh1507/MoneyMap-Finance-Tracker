@@ -36,7 +36,7 @@ A modern, responsive web application designed to help users manage their persona
 
 ## 📁 Project Structure
 
-Team Codequest/
+##Team Codequest/
 ├── Html/
 │ ├── Main.html # Home Page
 │ ├── signin.html # Authentication
