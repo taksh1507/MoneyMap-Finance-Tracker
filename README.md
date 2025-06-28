@@ -32,42 +32,6 @@ A modern, responsive web application designed to help users manage their persona
 - **Icons**: Emoji-based (lightweight)  
 - **Design**: Mobile-first responsive approach  
 
----
-
-## 📁 Project Structure
-
-##Team Codequest/
-├── Html/
-│ ├── Main.html # Home Page
-│ ├── signin.html # Authentication
-│ ├── financetracker.html # Finance Dashboard
-│ ├── profilepage.html # User Profile
-│ ├── about.html # About Section
-│ └── contact.html # Contact Page
-├── css/
-│ ├── main-styles.css
-│ ├── signin-styles.css
-│ ├── financetracker-styles.css
-│ ├── profilepage-styles.css
-│ ├── about-styles.css
-│ └── contact-styles.css
-├── Javascript/
-│ ├── firebaseauth.js
-│ ├── financetracker.js
-│ ├── profilepage.js
-│ ├── script.js
-│ └── scripts.js
-├── images/
-│ ├── hi.jpeg
-│ ├── saving.jpg
-│ └── dashboard.jpeg
-└── README.md
-
-yaml
-Copy
-Edit
-
----
 
 ## 🚀 Getting Started
 
