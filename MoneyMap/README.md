@@ -55,7 +55,7 @@ Team Codequest/
 ├── 📁 images/
 │   ├── 👋 hi.jpeg
 │   ├── 💾 saving.jpg
-│   └── 📱 WhatsApp Image 2024-09-28 at 18.28.17.jpeg
+│   └── 📱 money.jpg
 └── 📄 README.md
 ```
 
