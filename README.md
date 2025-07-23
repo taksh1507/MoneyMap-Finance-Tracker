@@ -71,18 +71,6 @@ A modern, responsive web application designed to help users manage their persona
 - Feedback form and contact options
 
 ---
-
-## 🎨 Design Details
-
-### 🌈 Color Palette
-| Color         | Hex       | Purpose               |
-|---------------|-----------|------------------------|
-| Primary Blue  | `#2563eb` | Trust and reliability  |
-| Deep Blue     | `#1d4ed8` | Depth and clarity      |
-| Accent Yellow | `#f59e0b` | Highlight & energy     |
-| Light Yellow  | `#fbbf24` | Friendly touch         |
-| White         | `#ffffff` | Clean and minimal UI   |
-
 ### ✨ Visual Effects
 - Glassmorphism (blur + transparency)  
 - Hover animations  
@@ -145,14 +133,6 @@ This project is licensed under the **MIT License**.
 - 📧 Email: Via the contact form in the app  
 - 🐛 Issues: Report via GitHub Issues tab  
 - 💡 Feature Requests: Use PRs or open discussions  
-
----
-
-## 🎉 Acknowledgments
-
-- **Google Fonts** – Typography (Poppins)  
-- **CSS Community** – Inspiration for glassmorphism  
-- **Open Source Devs** – Resources and ideas
 
 ---
 
