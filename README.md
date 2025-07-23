@@ -17,7 +17,6 @@ A modern, responsive web application designed to help users manage their persona
 ---
 
 ### 🎨 Modern UI/UX
-- 🌈 **Glassmorphism Design** – Beautiful glass-like interface effects  
 - ⚡ **Smooth Animations** – Engaging hover effects and transitions  
 - 📱 **Responsive Design** – Works flawlessly across devices  
 - 🎭 **Professional Color Scheme** – Blue, Yellow, and White palette  
