@@ -19,7 +19,7 @@ const auth = getAuth();
 const db = getFirestore();
 
 // Function to show feedback messages
-function showMessage(message, divId) {
+function showMessage(message, divId){
   const messageDiv = document.getElementById(divId);
   messageDiv.style.display = "block";
   messageDiv.innerHTML = message;
