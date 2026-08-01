@@ -1,0 +1,19 @@
+# .gitignore
+
+# Node modules
+node_modules/
+npm-debug.log
+
+# System files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
