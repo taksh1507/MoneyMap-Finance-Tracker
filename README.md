@@ -2,9 +2,7 @@
 
 **Your Smart Financial Companion**
 
-A modern, responsive web application designed to help users manage their personal finances with ease and precision.
-
----
+💰 MoneyMap is a responsive website to manage personal finances 🚀. Track income & expenses, visualize spending patterns 📊, set budgets 🎯, forecast expenses 🔮, and generate PDF/CSV reports 📋. Fully mobile-friendly with smooth animations ⚡ and modern UI 🎨.
 
 ## Project Overview
 

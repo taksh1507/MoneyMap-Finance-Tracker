@@ -23,6 +23,7 @@ function init() {
   document.getElementById('setBudgetBtn').addEventListener('click', handleSetBudget);
   document.getElementById('addTransactionBtn').addEventListener('click', handleAddTransaction);
   document.getElementById('generatePdfBtn').addEventListener('click', generatePDF);
+  document.getElementById('generateCsvBtn').addEventListener('click', generateCSV);
 
   // Initial render
   renderDashboard();
@@ -142,6 +143,23 @@ function renderDashboard() {
     savingElement.style.color = '#FF6384';
   }
 
+  // Calculate Forecast (Simple 30-day projection based on historical average daily expense)
+  let totalHistoricalExpenses = 0;
+  const expenseDates = new Set();
+  transactions.forEach(t => {
+    if (t.type === 'Expense') {
+      totalHistoricalExpenses += t.amount;
+      expenseDates.add(t.date);
+    }
+  });
+  
+  let expenseForecast = 0;
+  if (expenseDates.size > 0) {
+    const avgDailyExpense = totalHistoricalExpenses / expenseDates.size;
+    expenseForecast = avgDailyExpense * 30;
+  }
+  document.getElementById("expenseForecast").textContent = expenseForecast.toFixed(2);
+
   // Render Charts
   renderCharts(budgets, categoryExpenses);
 }
@@ -215,6 +233,40 @@ function generatePDF() {
       doc.save("personal_finance_report.pdf");
     });
   });
+}
+
+function generateCSV() {
+  const transactions = getTransactions();
+  if (transactions.length === 0) {
+    alert("No transactions to export.");
+    return;
+  }
+  
+  const headers = ["Date", "Description", "Category", "Type", "Amount"];
+  const csvRows = [headers.join(",")];
+  
+  transactions.sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(t => {
+    const row = [
+      t.date,
+      `"${t.desc.replace(/"/g, '""')}"`,
+      t.category,
+      t.type,
+      t.amount
+    ];
+    csvRows.push(row.join(","));
+  });
+  
+  const csvString = csvRows.join("\n");
+  const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  
+  const link = document.createElement("a");
+  link.setAttribute("href", url);
+  link.setAttribute("download", "transactions_report.csv");
+  link.style.visibility = 'hidden';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
 }
 
 // Initialize application on load
