@@ -8,6 +8,15 @@ import {
 
 let budgetChart, expensesChart;
 
+function escapeHtml(value) {
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 function init() {
   // Load initial budgets
   const budgets = getBudgets();
@@ -112,10 +121,10 @@ function renderDashboard() {
     const row = document.createElement('tr');
     row.style.borderBottom = '1px solid rgba(255,255,255,0.1)';
     row.innerHTML = `
-      <td style="padding: 10px 0;">${t.date}</td>
-      <td style="padding: 10px 0;">${t.desc}</td>
-      <td style="padding: 10px 0;">${t.category}</td>
-      <td style="padding: 10px 0; color: ${t.type === 'Income' ? '#4BC0C0' : '#FF6384'}">${t.type}</td>
+      <td style="padding: 10px 0;">${escapeHtml(t.date)}</td>
+      <td style="padding: 10px 0;">${escapeHtml(t.desc)}</td>
+      <td style="padding: 10px 0;">${escapeHtml(t.category)}</td>
+      <td style="padding: 10px 0; color: ${t.type === 'Income' ? '#4BC0C0' : '#FF6384'}">${escapeHtml(t.type)}</td>
       <td style="padding: 10px 0;">₹${t.amount.toFixed(2)}</td>
       <td style="padding: 10px 0;">
         <button onclick="window.editTransaction('${t.id}')" style="padding: 5px 10px; background: #36A2EB; border: none; border-radius: 4px; color: white; cursor: pointer; margin-right: 5px;">Edit</button>
