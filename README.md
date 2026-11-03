@@ -1,187 +1,174 @@
-# MoneyMap – Finance Tracker
+# MoneyMap — Finance Tracker
 
-**Your Smart Financial Companion**
+[![Live on GitHub Pages](https://img.shields.io/badge/live-GitHub%20Pages-blue)](https://taksh1507.github.io/MoneyMap-Finance-Tracker/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Vanilla JS](https://img.shields.io/badge/framework-vanilla%20JS-informational)]()
 
-💰 MoneyMap is a responsive website to manage personal finances 🚀. Track income & expenses, visualize spending patterns 📊, set budgets 🎯, forecast expenses 🔮, and generate PDF/CSV reports 📋. Fully mobile-friendly with smooth animations ⚡ and modern UI 🎨.
-
-## Project Overview
-
-MoneyMap is a fully functional client-side web application designed to help users manage their personal finances. It provides an intuitive interface for tracking income and expenses, managing budgets, and viewing financial summaries. The project emphasizes a clean, modern UI with responsive design principles, making it accessible across desktop and mobile devices. All data is managed using persistent client-side storage, allowing for a seamless experience without a backend server.
+**MoneyMap is a dependency-free client-side web app for tracking personal income, expenses, and budgets — with interactive charts and one-click PDF/CSV exports.**
 
 ---
 
-## Features
+## Problem Statement
 
-### Dashboard
-* Financial overview dashboard
-* Total balance summary
-* Total income overview
-* Total expense overview
-* Total savings summary
-* Recent transactions display
-* Quick access navigation
+Personal-budget apps typically require accounts, servers, or subscriptions. MoneyMap solves the lighter case: a single developer-friendly static site where a user can record transactions, monitor budgets against spending, and export reports — **all data stays on the user's device** (browser localStorage), with no backend and no data collection.
 
-### Transaction Management
-* Add transactions
-* Edit transactions
-* Delete transactions
-* View transaction history
-* Income tracking
-* Expense tracking
-* Transaction categorization
-* Date-based transaction records
+## Project Objectives
 
-### Budget Management
-* Create budgets
-* Update budgets
-* Delete budgets
-* Budget tracking
-* Spending monitoring
-* Budget utilization overview
+1. Make income/expense/budget tracking approachable and instant (no setup, no build step).
+2. Visualize spending patterns with interactive charts (Chart.js).
+3. Generate portable reports (PDF via jsPDF, CSV via Blob download).
+4. Practice clean vanilla-JS module architecture without frameworks.
 
-### Financial Overview
-* Income summary
-* Expense summary
-* Balance calculation
-* Savings overview
-* Monthly financial summary
+## Key Features
 
-### User Profile
-* User profile page
-* Personal information management
-* Account settings
-* Profile customization
-
-### User Interface
-* Modern Glassmorphism design
-* Responsive layout
-* Mobile-friendly interface
-* Gradient backgrounds
-* Smooth animations
-* Interactive elements
-* Clean navigation
-* Intuitive user experience
-* Consistent design system
-
-### Data Management
-* Client-side data handling via LocalStorage
-* Persistent transaction management
-* Financial record organization
-
-### Authentication Interface
-* Sign-in page
-* User authentication interface
-* Client-side mock login validation
-* Persistent session tracking
-
-### Navigation
-* Landing page
-* Finance tracker page
-* Profile page
-* About page
-* Contact page
-* Seamless page navigation
-
-### Performance
-* Lightweight architecture
-* Fast page loading
-* Optimized static assets
-* Efficient client-side execution
-
-### Accessibility
-* Semantic HTML structure
-* Responsive typography
-* User-friendly layouts
-* Cross-device compatibility
-
-### Browser Compatibility
-* Google Chrome
-* Mozilla Firefox
-* Microsoft Edge
-* Safari
-* Chromium-based browsers
-
-### Deployment
-* Static website deployment
-* No build process required
-* Ready for hosting on standard static web hosting platforms
-
-### Developer Experience
-* Modular project structure
-* Organized CSS files
-* Organized JavaScript files
-* Clean codebase
-* Consistent formatting
-* Easy maintenance
-* Scalable folder organization
-* Comprehensive documentation
-
----
+- **Dashboard** — total balance, income, expenses, and savings summary with recent-transaction feed
+- **Transaction management** — add, edit, delete, categorize, and filter transaction records (provider categories: Food, Bills, EMI, Entertainment, Salary, Other)
+- **Budget planning** — create/update/delete category budgets with utilization monitoring
+- **Visualizations** — interactive expense-distribution and budget-usage charts (Chart.js)
+- **Reports** — PDF report via jsPDF; CSV report via `Blob` + object URL download
+- **Forecast** — 30-day expense forecast from historical spending
+- **Profile & session** — mock client-side login (email stored in localStorage; passwords are never persisted)
+- **Responsive glassmorphism UI** — mobile-friendly layouts (Poppins typography)
 
 ## Technology Stack
 
-- **Frontend:** HTML5, CSS3, JavaScript (Vanilla)
-- **Styling:** Custom CSS with Glassmorphism effects
-- **Typography:** Google Fonts (Poppins)
-- **Deployment:** Static website, can be hosted anywhere (GitHub Pages, Netlify, Vercel)
+| Layer | Choice | Purpose |
+| --- | --- | --- |
+| Markup | HTML5 | 5 pages (landing, tracker, about, contact, profile) |
+| Styling | CSS3 (glassmorphism, gradients) | Custom, per-page stylesheets |
+| Logic | Vanilla JavaScript (ES modules) | Zero-dependency app logic |
+| Charts | Chart.js 3.7.0 (CDN) | Expense/budget visualization |
+| Reports | jsPDF 2.5.1 (CDN) | Client-side PDF generation |
+| Storage | `localStorage` via `js/storage.js` | Transactions, budgets, profile session |
+| Hosting | GitHub Pages | Static deployment, no build step |
 
----
+## Architecture Overview
 
-## Installation and Usage
+The app is a static multi-page site with a thin data-access module (`storage.js`) as the single source of truth for the client-side database. Each page is an ES module that imports only the storage API plus rendering libs.
 
-### Prerequisites
-- A modern web browser (Google Chrome, Mozilla Firefox, Microsoft Edge, Safari)
-- No build tools or package managers required.
+```mermaid
+flowchart LR
+    subgraph Pages
+        A[index.html] -->|landing/login| B[signin.html]
+        B -->|auth.js| S[storage.js session]
+        C[financetracker.html] --> F[financetracker.js]
+        D[profilepage.html] --> P[profilepage.js]
+    end
+    subgraph Data layer
+        S --> LS[("localStorage:\ntransactions,\nbudgets, profile")]
+        F --> S
+        P --> S
+    end
+    subgraph Visualization & output
+        F --> CH[Chart.js charts]
+        F --> PD[jsPDF report]
+        F --> CS[Blob CSV export]
+    end
+```
 
-### Quick Start
-1. Clone or download this repository.
-2. Open `index.html` in your browser.
-3. Navigate through the application to start tracking your finances!
+- **Data flow:** UI event (`financetracker.js`) → `storage.js` mutation → `localStorage` persist → re-render tables/charts.
+- **Escaping:** user-entered fields are HTML-escaped before DOM interpolation (`escapeHtml()` in `financetracker.js`) to prevent stored XSS.
+- See [docs/02-architecture.md](docs/02-architecture.md) for module responsibilities and the persisted data model.
 
----
-
-## Project Structure
+## Repository Structure
 
 ```text
 MoneyMap-Finance-Tracker/
-├── css/                  # Modular stylesheets
-├── html/                 # Application pages
+├── index.html               # Landing page (entry point)
+├── html/                    # Application pages
+│   ├── financetracker.html  # Dashboard: transactions, budgets, charts, reports
+│   ├── signin.html          # Mock sign-in / sign-up
+│   ├── profilepage.html     # User profile
 │   ├── about.html
-│   ├── contact.html
-│   ├── financetracker.html
-│   ├── profilepage.html
-│   └── signin.html
-├── images/               # Images and icons
-├── js/                   # Vanilla JavaScript files (storage.js, financetracker.js, auth.js)
-├── index.html            # Landing page
-├── .gitignore
-├── LICENSE
+│   └── contact.html
+├── css/                     # Per-page stylesheets
+├── js/                      # App logic (ES modules)
+│   ├── storage.js           # Data access layer (localStorage)
+│   ├── financetracker.js    # Dashboard rendering + reports
+│   ├── auth.js              # Mock login flow
+│   └── profilepage.js       # Profile rendering
+├── images/                  # Static assets
+├── docs/                    # Technical documentation
+│   ├── 01-project-overview.md
+│   ├── 02-architecture.md
+│   └── 03-testing-and-verification.md
+├── LICENSE                  # MIT
 └── README.md
 ```
 
----
+## Prerequisites
 
-## Future Enhancements
+- A modern browser (Chrome, Firefox, Edge, Safari).
+- Any static file server — **required**, because `js/auth.js` and friends use native ES module imports, which browsers block when pages are opened via `file://`.
 
-Potential features that could significantly improve the application include:
-- Backend integration for persistent data storage
-- User authentication and cloud synchronization
-- Improved data visualization with charts and graphs
-- Refactoring into a component-based framework (React, Vue, or Svelte)
-- Progressive Web App (PWA) support
+## Installation
 
----
+```bash
+git clone https://github.com/taksh1507/MoneyMap-Finance-Tracker.git
+cd MoneyMap-Finance-Tracker
+python -m http.server 8000        # or: npx serve .
+```
 
-## Contribution Guidelines
+## Usage
 
-1. Fork the repository
-2. Create a new feature branch (`git checkout -b feature/your-feature`)
-3. Commit your changes (`git commit -m 'Add your feature'`)
-4. Push to the branch (`git push origin feature/your-feature`)
-5. Open a Pull Request (PR)
+1. Open `http://localhost:8000` in your browser.
+2. Sign up / sign in on `html/signin.html` (demo credentials — see limitations).
+3. On **Finance Tracker**, add income/expense transactions, set budgets, and watch the charts update.
+4. Request a **PDF report** (jsPDF) or **CSV export** from the toolbar.
 
----
+## Database (client-side)
+
+- `transactions` — `{ id: epoch-ms-string, date, desc, category, type: "Income"|"Expense", amount }`
+- `budgets` — per-category limit records
+- `profile` — session email + display name
+
+All three persist under distinct `localStorage` keys managed exclusively by `js/storage.js`.
+
+## Testing & Verification
+
+Currently no automated suite (no test framework is a known gap). Verified during the latest repository audit:
+
+| Check | Result |
+| --- | --- |
+| ES module syntax (`node --check`) | PASS — all JS parsed cleanly |
+| Local static server smoke (10 routes/assets) | PASS — 10/10 HTTP 200 |
+| README claims vs. implementation (PDF/CSV/forecast) | PASS — all implemented |
+| Stored-XSS regression (escaping review of DOM writes) | PASS — `escapeHtml` applied to user-entered fields |
+| GitHub Pages deployment (build + deploy jobs) | PASS — live URL 200 |
+
+Details and how to re-run the checks: [docs/03-testing-and-verification.md](docs/03-testing-and-verification.md)
+
+## Deployment
+
+- **GitHub Pages (verified live):** https://taksh1507.github.io/MoneyMap-Finance-Tracker/ — pushes to `main` trigger the automatic pages build.
+- Any static host works (Vercel/Netlify) since there is no build step; set the publish directory to the repository root.
+
+## Implementation Status
+
+- ✅ Dashboard, transactions, budgets, charts, PDF/CSV export, 30-day forecast — implemented and verified
+- ✅ Responsive layout (mobile + desktop)
+- ⚠️ Authentication — client-side mock only (intentional scope)
+
+## Known Limitations
+
+1. **No real backend** — data lives in the browser's localStorage; clearing browser data erases it (by design, documented, not a defect).
+2. **Mock auth** — sign-up never persists passwords; do not use with real credentials.
+3. **No automated tests** — verification is manual/scripted at runtime level; a Playwright suite is the natural next step.
+4. **CDN-only third parties** — Chart.js/jsPDF/html2canvas load from CDN; offline usage needs vendoring.
+
+## Future Improvements
+
+- Real authentication with a lightweight backend (e.g., Supabase/Firebase) and cloud sync
+- Export/import for full data portability (JSON backup/restore)
+- Recurring transactions and monthly rollover
+- Playwright end-to-end tests for the add/edit/delete flows
+
+## Technical Documentation
+
+- [Project overview](docs/01-project-overview.md)
+- [Architecture](docs/02-architecture.md)
+- [Testing & verification](docs/03-testing-and-verification.md)
 
 ## License
 
-This project is licensed under the **MIT License**.
+Released under the [MIT License](LICENSE).
