@@ -34,4 +34,4 @@ Static JavaScript finance tracker. Opening Edit deleted the saved transaction. T
 
 No backend, database migration, deployment or measured performance optimization was performed. See `SECURITY_AUDIT.md` for remaining security and dependency risks. This is an initial remediation pass, not completion of all portfolio work.
 
-Pull request: pending creation.
+Pull request: https://github.com/taksh1507/MoneyMap-Finance-Tracker/pull/3
