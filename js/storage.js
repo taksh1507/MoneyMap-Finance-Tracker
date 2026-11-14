@@ -31,7 +31,7 @@ export function saveData(data) {
 // Transactions
 export function addTransaction(transaction) {
     const data = getData();
-    transaction.id = Date.now().toString();
+    transaction = { ...transaction, id: crypto.randomUUID() };
     data.transactions.push(transaction);
     saveData(data);
     return transaction.id;
@@ -41,7 +41,7 @@ export function editTransaction(id, updatedTransaction) {
     const data = getData();
     const index = data.transactions.findIndex(t => t.id === id);
     if (index !== -1) {
-        data.transactions[index] = { ...data.transactions[index], ...updatedTransaction };
+        data.transactions[index] = { ...data.transactions[index], ...updatedTransaction, id };
         saveData(data);
     }
 }

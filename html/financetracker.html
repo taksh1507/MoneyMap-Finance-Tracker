@@ -6,16 +6,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MoneyMap Finance Tracker (INR)</title>
   <link rel="stylesheet" href="../css/financetracker-styles.css" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="../js/vendor/chart.min.js"></script>
+  <script src="../js/vendor/jspdf.umd.min.js"></script>
+  <script src="../js/vendor/html2canvas.min.js"></script>
 </head>
 
 <body>
   <header>
     <div class="navigation-bar">
       <h1 class="logo">MoneyMap</h1>
-      <nav>
+      <nav aria-label="Main navigation">
         <ul>
           <li><a href="../index.html">Home</a></li>
           <li><a href="financetracker.html" class="active">Tracker</a></li>
@@ -26,30 +26,39 @@
     </div>
   </header>
 
-  <div class="container">
+  <main class="container">
     <h1>Personal Finance Tracker</h1>
 
     <div class="input-group">
       <h2>Set Budgets (INR)</h2>
-      <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px;">
-        <input type="number" id="foodBudget" placeholder="Food" />
-        <input type="number" id="billsBudget" placeholder="Bills" />
-        <input type="number" id="emiBudget" placeholder="EMI" />
-        <input type="number" id="entertainmentBudget" placeholder="Entertainment" />
+      <div class="form-grid">
+        <label class="sr-only" for="foodBudget">Food budget in rupees</label>
+        <input min="0" step="0.01" type="number" id="foodBudget" placeholder="Food" />
+        <label class="sr-only" for="billsBudget">Bills budget in rupees</label>
+        <input min="0" step="0.01" type="number" id="billsBudget" placeholder="Bills" />
+        <label class="sr-only" for="emiBudget">EMI budget in rupees</label>
+        <input min="0" step="0.01" type="number" id="emiBudget" placeholder="EMI" />
+        <label class="sr-only" for="entertainmentBudget">Entertainment budget in rupees</label>
+        <input min="0" step="0.01" type="number" id="entertainmentBudget" placeholder="Entertainment" />
       </div>
       <button id="setBudgetBtn">Update Budgets</button>
     </div>
 
     <div class="input-group">
       <h2>Add Transaction</h2>
-      <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px;">
+      <div class="form-grid">
+        <label class="sr-only" for="transactionDate">Transaction date</label>
         <input type="date" id="transactionDate" required />
+        <label class="sr-only" for="transactionDesc">Description</label>
         <input type="text" id="transactionDesc" placeholder="Description" required />
-        <input type="number" id="transactionAmount" placeholder="Amount (INR)" required />
+        <label class="sr-only" for="transactionAmount">Amount in rupees</label>
+        <input min="0" step="0.01" type="number" id="transactionAmount" placeholder="Amount (INR)" required />
+        <label class="sr-only" for="transactionType">Transaction type</label>
         <select id="transactionType">
           <option value="Expense">Expense</option>
           <option value="Income">Income</option>
         </select>
+        <label class="sr-only" for="transactionCategory">Transaction category</label>
         <select id="transactionCategory">
           <option value="Food">Food</option>
           <option value="Bills">Bills</option>
@@ -64,6 +73,7 @@
 
     <div class="transactions-list">
       <h2>Recent Transactions</h2>
+      <div class="table-scroll" role="region" aria-label="Recent transactions, scroll horizontally for all columns" tabindex="0">
       <table id="transactionsTable"
         style="width: 100%; text-align: left; border-collapse: collapse; margin-bottom: 20px;">
         <thead>
@@ -80,6 +90,7 @@
           <!-- Transactions will be rendered here -->
         </tbody>
       </table>
+      </div>
     </div>
 
     <div class="chart-container">
@@ -100,10 +111,12 @@
       <p>Total Expenses: ₹<span id="totalExpenses">0</span></p>
       <p>Monthly Savings: ₹<span id="monthlySavings">0</span></p>
       <p>Budget Utilization: <span id="budgetUtilization">0</span>%</p>
+      <p>30-day Expense Projection: ₹<span id="expenseForecast">0</span></p>
     </div>
 
     <button id="generatePdfBtn">Generate PDF Report</button>
-  </div>
+    <button id="generateCsvBtn">Export Transactions as CSV</button>
+  </main>
 
   <script type="module" src="../js/financetracker.js"></script>
 </body>

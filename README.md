@@ -4,7 +4,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Vanilla JS](https://img.shields.io/badge/framework-vanilla%20JS-informational)]()
 
-**MoneyMap is a dependency-free client-side web app for tracking personal income, expenses, and budgets — with interactive charts and one-click PDF/CSV exports.**
+**MoneyMap is a static client-side web app for tracking personal income, expenses, and budgets — with interactive charts and one-click PDF/CSV exports.**
 
 ---
 
@@ -37,8 +37,8 @@ Personal-budget apps typically require accounts, servers, or subscriptions. Mone
 | Markup | HTML5 | 5 pages (landing, tracker, about, contact, profile) |
 | Styling | CSS3 (glassmorphism, gradients) | Custom, per-page stylesheets |
 | Logic | Vanilla JavaScript (ES modules) | Zero-dependency app logic |
-| Charts | Chart.js 3.7.0 (CDN) | Expense/budget visualization |
-| Reports | jsPDF 2.5.1 (CDN) | Client-side PDF generation |
+| Charts | Chart.js 3.7.0 (vendored) | Expense/budget visualization |
+| Reports | jsPDF 2.5.1 (vendored) | Client-side PDF generation |
 | Storage | `localStorage` via `js/storage.js` | Transactions, budgets, profile session |
 | Hosting | GitHub Pages | Static deployment, no build step |
 
@@ -172,3 +172,21 @@ Details and how to re-run the checks: [docs/03-testing-and-verification.md](docs
 ## License
 
 Released under the [MIT License](LICENSE).
+
+## Regression tests and audit evidence
+
+Use Node.js 22 or newer:
+
+```bash
+node --test tests/*.test.mjs
+python -m http.server 8765 --bind 127.0.0.1
+```
+
+Open `http://127.0.0.1:8765/html/financetracker.html`. Editing preserves the saved
+transaction until **Save Changes**. The tracker uses local copies of Chart.js,
+jsPDF and html2canvas; their license headers and download sources are in
+`js/vendor/`. Dependency security upgrades remain outstanding.
+
+See `docs/audits/` for actual test results, remaining risks, and verified desktop
+and mobile screenshots. Sign-in is a local demo, not an authentication boundary;
+records share browser storage and are not encrypted.

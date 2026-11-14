@@ -1,12 +1,14 @@
 import {
   addTransaction,
   deleteTransaction,
+  editTransaction as updateTransaction,
   getTransactions,
   getBudgets,
   updateBudgets,
 } from './storage.js';
 
 let budgetChart, expensesChart;
+let editingTransactionId = null;
 
 function escapeHtml(value) {
   return String(value)
@@ -45,23 +47,33 @@ function handleSetBudget() {
     EMI: parseFloat(document.getElementById('emiBudget').value) || 0,
     Entertainment: parseFloat(document.getElementById('entertainmentBudget').value) || 0,
   };
+  if (Object.values(newBudgets).some(value => !Number.isFinite(value) || value < 0)) {
+    alert('Budgets must be finite, non-negative amounts.');
+    return;
+  }
   updateBudgets(newBudgets);
   renderDashboard();
 }
 
 function handleAddTransaction() {
   const date = document.getElementById('transactionDate').value;
-  const desc = document.getElementById('transactionDesc').value;
+  const desc = document.getElementById('transactionDesc').value.trim();
   const amount = parseFloat(document.getElementById('transactionAmount').value);
   const type = document.getElementById('transactionType').value;
   const category = document.getElementById('transactionCategory').value;
 
-  if (!date || !desc || isNaN(amount) || amount <= 0) {
+  if (!date || !desc || !Number.isFinite(amount) || amount <= 0) {
     alert('Please enter valid transaction details.');
     return;
   }
 
-  addTransaction({ date, desc, amount, type, category });
+  if (editingTransactionId !== null) {
+    updateTransaction(editingTransactionId, { date, desc, amount, type, category });
+    editingTransactionId = null;
+    document.getElementById('addTransactionBtn').textContent = 'Add Transaction';
+  } else {
+    addTransaction({ date, desc, amount, type, category });
+  }
   
   // Clear inputs
   document.getElementById('transactionDesc').value = '';
@@ -74,6 +86,12 @@ function handleAddTransaction() {
 window.removeTransaction = function(id) {
   if (confirm('Are you sure you want to delete this transaction?')) {
     deleteTransaction(id);
+    if (editingTransactionId === id) {
+      editingTransactionId = null;
+      document.getElementById('transactionDesc').value = '';
+      document.getElementById('transactionAmount').value = '';
+      document.getElementById('addTransactionBtn').textContent = 'Add Transaction';
+    }
     renderDashboard();
   }
 };
@@ -88,9 +106,9 @@ window.editTransaction = function(id) {
     document.getElementById('transactionType').value = t.type;
     document.getElementById('transactionCategory').value = t.category;
     
-    // Remove the old transaction so the user can save the updated one
-    deleteTransaction(id);
-    renderDashboard();
+    editingTransactionId = id;
+    document.getElementById('addTransactionBtn').textContent = 'Save Changes';
+    document.getElementById('transactionDesc').focus();
   }
 };
 
@@ -127,10 +145,12 @@ function renderDashboard() {
       <td style="padding: 10px 0; color: ${t.type === 'Income' ? '#4BC0C0' : '#FF6384'}">${escapeHtml(t.type)}</td>
       <td style="padding: 10px 0;">₹${t.amount.toFixed(2)}</td>
       <td style="padding: 10px 0;">
-        <button onclick="window.editTransaction('${t.id}')" style="padding: 5px 10px; background: #36A2EB; border: none; border-radius: 4px; color: white; cursor: pointer; margin-right: 5px;">Edit</button>
-        <button onclick="window.removeTransaction('${t.id}')" style="padding: 5px 10px; background: #ff4d4d; border: none; border-radius: 4px; color: white; cursor: pointer;">Delete</button>
+        <button data-action="edit" class="btn-edit">Edit</button>
+        <button data-action="delete" class="btn-delete">Delete</button>
       </td>
     `;
+    row.querySelector('[data-action="edit"]').addEventListener('click', () => window.editTransaction(t.id));
+    row.querySelector('[data-action="delete"]').addEventListener('click', () => window.removeTransaction(t.id));
     tbody.appendChild(row);
   });
 
@@ -251,18 +271,23 @@ function generateCSV() {
     return;
   }
   
+  const csvCell = value => {
+    let text = String(value);
+    if (/^[\s]*[=+@-]/.test(text) && typeof value !== 'number') text = "'" + text;
+    return '"' + text.replace(/"/g, '""') + '"';
+  };
   const headers = ["Date", "Description", "Category", "Type", "Amount"];
   const csvRows = [headers.join(",")];
   
   transactions.sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(t => {
     const row = [
       t.date,
-      `"${t.desc.replace(/"/g, '""')}"`,
+      t.desc,
       t.category,
       t.type,
       t.amount
     ];
-    csvRows.push(row.join(","));
+    csvRows.push(row.map(csvCell).join(","));
   });
   
   const csvString = csvRows.join("\n");
@@ -276,6 +301,7 @@ function generateCSV() {
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
+  URL.revokeObjectURL(url);
 }
 
 // Initialize application on load
