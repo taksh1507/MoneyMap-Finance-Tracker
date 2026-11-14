@@ -210,7 +210,7 @@ function renderCharts(budgets, categoryExpenses) {
         backgroundColor: budgetData.length > 0 ? ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0"] : ["#333"],
       }],
     },
-    options: { responsive: true, plugins: { title: { display: true, text: "Budget Allocation", color: '#fff' }, legend: { labels: { color: '#fff' } } } },
+    options: { animation: false, responsive: true, plugins: { title: { display: true, text: "Budget Allocation", color: '#fff' }, legend: { labels: { color: '#fff' } } } },
   });
 
   // Expense Chart
@@ -230,7 +230,8 @@ function renderCharts(budgets, categoryExpenses) {
         backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#9966FF", "#FF9F40"],
       }],
     },
-    options: { 
+    options: {
+      animation: false,
       responsive: true,
       plugins: { legend: { labels: { color: '#fff' } } },
       scales: {
