@@ -1,111 +1,128 @@
 <!doctype html>
 <html lang="en">
-
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MoneyMap Finance Tracker (INR)</title>
-  <link rel="stylesheet" href="../css/financetracker-styles.css" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-</head>
-
-<body>
-  <header>
-    <div class="navigation-bar">
-      <h1 class="logo">MoneyMap</h1>
-      <nav>
-        <ul>
-          <li><a href="../index.html">Home</a></li>
-          <li><a href="financetracker.html" class="active">Tracker</a></li>
-          <li><a href="profilepage.html">Profile</a></li>
-          <li><a href="signin.html">Sign In</a></li>
-        </ul>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#16775c" />
+    <meta
+      name="description"
+      content="A calmer way to track spending, plan monthly budgets and make room for your goals."
+    />
+    <title>MoneyMap — Your money, in perspective</title>
+    <link rel="icon" href="../images/mark.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="../css/workspace.css" />
+    <script type="module" src="../js/app.js"></script>
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="#overview"
+        ><img class="brand-image" src="../images/mark.svg" alt="" /><span
+          >MoneyMap<span class="brand-caption">PERSONAL FINANCE</span></span
+        ></a
+      >
+      <p class="nav-caption">YOUR WORKSPACE</p>
+      <nav aria-label="Main navigation">
+        <a href="#overview" data-view="overview"
+          ><span data-icon="grid" aria-hidden="true"></span> <span>Overview</span></a
+        ><a href="#transactions" data-view="transactions"
+          ><span data-icon="exchange" aria-hidden="true"></span> <span>Transactions</span></a
+        ><a href="#budgets" data-view="budgets"
+          ><span data-icon="pie" aria-hidden="true"></span> <span>Budgets</span></a
+        ><a href="#goals" data-view="goals"
+          ><span data-icon="flag" aria-hidden="true"></span> <span>Savings goals</span></a
+        ><a href="#recurring" data-view="recurring"
+          ><span data-icon="repeat" aria-hidden="true"></span> <span>Recurring</span></a
+        >
       </nav>
-    </div>
-  </header>
-
-  <div class="container">
-    <h1>Personal Finance Tracker</h1>
-
-    <div class="input-group">
-      <h2>Set Budgets (INR)</h2>
-      <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px;">
-        <input type="number" id="foodBudget" placeholder="Food" />
-        <input type="number" id="billsBudget" placeholder="Bills" />
-        <input type="number" id="emiBudget" placeholder="EMI" />
-        <input type="number" id="entertainmentBudget" placeholder="Entertainment" />
+      <div class="sidebar-bottom">
+        <div class="local-note">
+          <span class="status-dot"></span> A little clarity goes a long way.
+          <p>Your money. Your own pace.</p>
+        </div>
+        <a href="#settings" class="settings-link"
+          ><span data-icon="settings" aria-hidden="true"></span> <span>Workspace settings</span></a
+        >
+        <a href="#settings" class="sidebar-profile" aria-label="Edit workspace preferences">
+          <span class="avatar" id="avatar">Y</span>
+          <div>
+            <strong id="profile-label">Your workspace</strong><small>Stored on this browser</small>
+          </div>
+          <span data-icon="arrow" aria-hidden="true"></span>
+        </a>
       </div>
-      <button id="setBudgetBtn">Update Budgets</button>
+    </aside>
+    <div class="app-shell">
+      <header class="topbar">
+        <button
+          id="menu-button"
+          class="icon-button menu-button"
+          aria-label="Toggle navigation"
+          aria-controls="sidebar"
+          aria-expanded="false"
+        >
+          <span data-icon="menu" aria-hidden="true"></span>
+        </button>
+        <div class="breadcrumb">Workspace <span>/</span> <strong id="crumb">Overview</strong></div>
+        <div class="topbar-right">
+          <span class="local-pill"><i></i> Local workspace</span
+          ><button class="icon-button" id="theme-toggle" aria-label="Switch to dark theme">
+            <span data-icon="moon" aria-hidden="true"></span></button
+          ><a href="#settings" class="avatar small" aria-label="Workspace settings">Y</a>
+        </div>
+      </header>
+      <main id="main" tabindex="-1">
+        <div id="storage-error" class="error-banner" hidden></div>
+        <div id="sample-banner" class="sample-banner" hidden>
+          Sample data is included in this workspace. <a href="#settings">Manage your data →</a>
+        </div>
+        <div class="page-heading">
+          <div>
+            <p class="eyebrow">A LITTLE CLARITY. A LOT MORE POSSIBILITY.</p>
+            <h1 id="page-title">Your money, in perspective<span>.</span></h1>
+            <p id="page-description">A clear view of where you are, and where you’re headed.</p>
+          </div>
+          <div class="heading-actions">
+            <label class="month-picker"
+              ><span class="sr-only">Selected month</span
+              ><input
+                id="selected-month"
+                type="month"
+                required
+                min="1900-01"
+                max="2199-12" /></label
+            ><button class="button primary" id="add-entry" aria-label="Add transaction">
+              <span data-icon="plus" aria-hidden="true"></span> Add transaction
+            </button>
+          </div>
+        </div>
+        <div id="view"></div>
+        <footer class="workspace-footer">
+          <span><b>MoneyMap</b> · Make room for what matters.</span
+          ><span>Built for everyday decisions, not financial advice.</span>
+        </footer>
+      </main>
     </div>
-
-    <div class="input-group">
-      <h2>Add Transaction</h2>
-      <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px;">
-        <input type="date" id="transactionDate" required />
-        <input type="text" id="transactionDesc" placeholder="Description" required />
-        <input type="number" id="transactionAmount" placeholder="Amount (INR)" required />
-        <select id="transactionType">
-          <option value="Expense">Expense</option>
-          <option value="Income">Income</option>
-        </select>
-        <select id="transactionCategory">
-          <option value="Food">Food</option>
-          <option value="Bills">Bills</option>
-          <option value="EMI">EMI</option>
-          <option value="Entertainment">Entertainment</option>
-          <option value="Salary">Salary</option>
-          <option value="Other">Other</option>
-        </select>
-      </div>
-      <button id="addTransactionBtn">Add Transaction</button>
-    </div>
-
-    <div class="transactions-list">
-      <h2>Recent Transactions</h2>
-      <table id="transactionsTable"
-        style="width: 100%; text-align: left; border-collapse: collapse; margin-bottom: 20px;">
-        <thead>
-          <tr style="border-bottom: 1px solid rgba(255,255,255,0.2);">
-            <th>Date</th>
-            <th>Description</th>
-            <th>Category</th>
-            <th>Type</th>
-            <th>Amount (INR)</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- Transactions will be rendered here -->
-        </tbody>
-      </table>
-    </div>
-
-    <div class="chart-container">
-      <div class="chart">
-        <h2>Budget Overview</h2>
-        <canvas id="budgetPieChart"></canvas>
-      </div>
-      <div class="chart">
-        <h2>Expenses Overview</h2>
-        <canvas id="expensesBarChart"></canvas>
-      </div>
-    </div>
-
-    <div class="summary">
-      <h2>Financial Summary (INR)</h2>
-      <p>Total Income: ₹<span id="totalIncome">0</span></p>
-      <p>Total Budget: ₹<span id="totalBudget">0</span></p>
-      <p>Total Expenses: ₹<span id="totalExpenses">0</span></p>
-      <p>Monthly Savings: ₹<span id="monthlySavings">0</span></p>
-      <p>Budget Utilization: <span id="budgetUtilization">0</span>%</p>
-    </div>
-
-    <button id="generatePdfBtn">Generate PDF Report</button>
-  </div>
-
-  <script type="module" src="../js/financetracker.js"></script>
-</body>
-
+    <dialog id="editor" aria-labelledby="dialog-title">
+      <form id="editor-form">
+        <div class="dialog-heading">
+          <div>
+            <p class="eyebrow">YOUR WORKSPACE</p>
+            <h2 id="dialog-title"></h2>
+          </div>
+          <button type="button" class="icon-button" data-close aria-label="Close dialog">
+            <span data-icon="close" aria-hidden="true"></span>
+          </button>
+        </div>
+        <div id="dialog-fields"></div>
+        <p id="form-error" class="form-error" role="alert"></p>
+        <div class="dialog-actions">
+          <button type="button" class="button" data-close>Cancel</button
+          ><button type="submit" class="button primary" id="dialog-save">Save transaction</button>
+        </div>
+      </form>
+    </dialog>
+    <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+    <input type="file" id="import-file" accept="application/json,.json" hidden />
+  </body>
 </html>

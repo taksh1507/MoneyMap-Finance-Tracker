@@ -17,3 +17,7 @@ desktop.ini
 *.njsproj
 *.sln
 *.sw?
+
+# Local verification output
+/test-results/
+/playwright-report/
