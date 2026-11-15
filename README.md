@@ -1,192 +1,92 @@
-# MoneyMap — Finance Tracker
+# MoneyMap
 
-[![Live on GitHub Pages](https://img.shields.io/badge/live-GitHub%20Pages-blue)](https://taksh1507.github.io/MoneyMap-Finance-Tracker/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Vanilla JS](https://img.shields.io/badge/framework-vanilla%20JS-informational)]()
+**Your money, in perspective.** A local-first finance workspace for tracking everyday spending, planning monthly budgets, and saving for what matters.
 
-**MoneyMap is a static client-side web app for tracking personal income, expenses, and budgets — with interactive charts and one-click PDF/CSV exports.**
+[![Workspace verification](https://github.com/taksh1507/MoneyMap-Finance-Tracker/actions/workflows/tests.yml/badge.svg)](https://github.com/taksh1507/MoneyMap-Finance-Tracker/actions)
+[![MIT license](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
----
+![MoneyMap overview with sample data](docs/screenshots/overview-desktop.png)
 
-## Problem Statement
+## A workspace for the everyday
 
-Personal-budget apps typically require accounts, servers, or subscriptions. MoneyMap solves the lighter case: a single developer-friendly static site where a user can record transactions, monitor budgets against spending, and export reports — **all data stays on the user's device** (browser localStorage), with no backend and no data collection.
+- **Monthly overview:** income, expenses, balance, savings rate, a six-month cash-flow chart, and spending by category.
+- **Transaction ledger:** add, edit, delete, search, filter, sort, and paginate income and expenses.
+- **Category budgets:** separate plans for each month, utilization bars, remaining amounts, and overspending states.
+- **Savings goals:** set a target, track saved amounts, and add contributions without changing the transaction ledger.
+- **Recurring reminders:** monthly income or expenses, short-month date adjustment, and one-time recording of due entries.
+- **Portable records:** export filtered transactions to CSV, print a complete report or save it as PDF, and download/restore a complete JSON backup.
+- **Make it yours:** light/dark themes, INR/USD/EUR/GBP display preferences, and responsive desktop, tablet, and mobile layouts.
 
-## Project Objectives
+No account is needed. Start with an empty workspace or explicitly load clearly marked sample data. Records live in your browser profile; keep backups to move them between devices.
 
-1. Make income/expense/budget tracking approachable and instant (no setup, no build step).
-2. Visualize spending patterns with interactive charts (Chart.js).
-3. Generate portable reports (PDF via jsPDF, CSV via Blob download).
-4. Practice clean vanilla-JS module architecture without frameworks.
+<details>
+<summary>See mobile and savings goals</summary>
 
-## Key Features
+<img src="docs/screenshots/overview-mobile.png" alt="MoneyMap overview on a mobile screen" width="320">
 
-- **Dashboard** — total balance, income, expenses, and savings summary with recent-transaction feed
-- **Transaction management** — add, edit, delete, categorize, and filter transaction records (provider categories: Food, Bills, EMI, Entertainment, Salary, Other)
-- **Budget planning** — create/update/delete category budgets with utilization monitoring
-- **Visualizations** — interactive expense-distribution and budget-usage charts (Chart.js)
-- **Reports** — PDF report via jsPDF; CSV report via `Blob` + object URL download
-- **Forecast** — 30-day expense forecast from historical spending
-- **Profile & session** — mock client-side login (email stored in localStorage; passwords are never persisted)
-- **Responsive glassmorphism UI** — mobile-friendly layouts (Poppins typography)
+![Savings goals](docs/screenshots/goals-desktop.png)
 
-## Technology Stack
+Screenshots show the optional sample workspace, not actual financial records.
+</details>
 
-| Layer | Choice | Purpose |
-| --- | --- | --- |
-| Markup | HTML5 | 5 pages (landing, tracker, about, contact, profile) |
-| Styling | CSS3 (glassmorphism, gradients) | Custom, per-page stylesheets |
-| Logic | Vanilla JavaScript (ES modules) | Zero-dependency app logic |
-| Charts | Chart.js 3.7.0 (vendored) | Expense/budget visualization |
-| Reports | jsPDF 2.5.1 (vendored) | Client-side PDF generation |
-| Storage | `localStorage` via `js/storage.js` | Transactions, budgets, profile session |
-| Hosting | GitHub Pages | Static deployment, no build step |
+## Run locally
 
-## Architecture Overview
-
-The app is a static multi-page site with a thin data-access module (`storage.js`) as the single source of truth for the client-side database. Each page is an ES module that imports only the storage API plus rendering libs.
-
-```mermaid
-flowchart LR
-    subgraph Pages
-        A[index.html] -->|landing/login| B[signin.html]
-        B -->|auth.js| S[storage.js session]
-        C[financetracker.html] --> F[financetracker.js]
-        D[profilepage.html] --> P[profilepage.js]
-    end
-    subgraph Data layer
-        S --> LS[("localStorage:\ntransactions,\nbudgets, profile")]
-        F --> S
-        P --> S
-    end
-    subgraph Visualization & output
-        F --> CH[Chart.js charts]
-        F --> PD[jsPDF report]
-        F --> CS[Blob CSV export]
-    end
-```
-
-- **Data flow:** UI event (`financetracker.js`) → `storage.js` mutation → `localStorage` persist → re-render tables/charts.
-- **Escaping:** user-entered fields are HTML-escaped before DOM interpolation (`escapeHtml()` in `financetracker.js`) to prevent stored XSS.
-- See [docs/02-architecture.md](docs/02-architecture.md) for module responsibilities and the persisted data model.
-
-## Repository Structure
-
-```text
-MoneyMap-Finance-Tracker/
-├── index.html               # Landing page (entry point)
-├── html/                    # Application pages
-│   ├── financetracker.html  # Dashboard: transactions, budgets, charts, reports
-│   ├── signin.html          # Mock sign-in / sign-up
-│   ├── profilepage.html     # User profile
-│   ├── about.html
-│   └── contact.html
-├── css/                     # Per-page stylesheets
-├── js/                      # App logic (ES modules)
-│   ├── storage.js           # Data access layer (localStorage)
-│   ├── financetracker.js    # Dashboard rendering + reports
-│   ├── auth.js              # Mock login flow
-│   └── profilepage.js       # Profile rendering
-├── images/                  # Static assets
-├── docs/                    # Technical documentation
-│   ├── 01-project-overview.md
-│   ├── 02-architecture.md
-│   └── 03-testing-and-verification.md
-├── LICENSE                  # MIT
-└── README.md
-```
-
-## Prerequisites
-
-- A modern browser (Chrome, Firefox, Edge, Safari).
-- Any static file server — **required**, because `js/auth.js` and friends use native ES module imports, which browsers block when pages are opened via `file://`.
-
-## Installation
+The application uses native HTML, CSS, and JavaScript modules. There is **no production dependency or build step**. Serve the repository over HTTP:
 
 ```bash
 git clone https://github.com/taksh1507/MoneyMap-Finance-Tracker.git
 cd MoneyMap-Finance-Tracker
-python -m http.server 8000        # or: npx serve .
+python3 -m http.server 8765 --bind 127.0.0.1
 ```
 
-## Usage
+Open `http://127.0.0.1:8765`. The previous `html/financetracker.html` URL also opens the workspace. Earlier sign-in/profile links lead to the corresponding workspace view.
 
-1. Open `http://localhost:8000` in your browser.
-2. Sign up / sign in on `html/signin.html` (demo credentials — see limitations).
-3. On **Finance Tracker**, add income/expense transactions, set budgets, and watch the charts update.
-4. Request a **PDF report** (jsPDF) or **CSV export** from the toolbar.
+For a static host such as GitHub Pages, publish the repository root. Relative asset paths support a project subdirectory. Runtime assets are served locally; the app does not request external fonts, chart services, or report libraries. A first visit still requires a connection to the host; this is not an installable offline PWA.
 
-## Database (client-side)
+## How to use it
 
-- `transactions` — `{ id: epoch-ms-string, date, desc, category, type: "Income"|"Expense", amount }`
-- `budgets` — per-category limit records
-- `profile` — session email + display name
+1. Add a transaction with a description, amount, date, type, and category.
+2. Select a month to review that period. Use Transactions to search and export a subset.
+3. Set monthly budgets or create a savings goal. Goal savings are tracked separately from your ledger balance.
+4. Add recurring reminders. **Record entry** adds a due item once; it does not make a payment or run automatically.
+5. In Workspace settings, download a backup before restoring data or clearing the workspace.
 
-All three persist under distinct `localStorage` keys managed exclusively by `js/storage.js`.
+Currency selection changes display labels only; it does not convert existing amounts. Monthly totals include entries dated in the selected month. The spending projection uses recorded expenses through today divided by elapsed calendar days; it is an estimate, not a prediction.
 
-## Testing & Verification
+## Architecture
 
-Currently no automated suite (no test framework is a known gap). Verified during the latest repository audit:
+```mermaid
+flowchart LR
+    UI[Workspace views and dialogs] --> Model[Validation and monthly calculations]
+    UI --> Storage[Validated read / update / restore]
+    Storage --> Browser[(Browser localStorage)]
+    UI --> Exports[CSV / JSON / browser PDF]
+```
 
-| Check | Result |
+| Module | Responsibility |
 | --- | --- |
-| ES module syntax (`node --check`) | PASS — all JS parsed cleanly |
-| Local static server smoke (10 routes/assets) | PASS — 10/10 HTTP 200 |
-| README claims vs. implementation (PDF/CSV/forecast) | PASS — all implemented |
-| Stored-XSS regression (escaping review of DOM writes) | PASS — `escapeHtml` applied to user-entered fields |
-| GitHub Pages deployment (build + deploy jobs) | PASS — live URL 200 |
+| `js/app.js` | View rendering, navigation, forms, filters, and export interactions |
+| `js/model.js` | Data validation, monthly summaries, recurring dates, and CSV formatting |
+| `js/storage.js` | Persistence, legacy-data normalization, and atomic workspace updates |
+| `js/icons.js` | Local SVG interface icons |
+| `css/workspace.css` | Responsive layout, themes, dialogs, and print presentation |
 
-Details and how to re-run the checks: [docs/03-testing-and-verification.md](docs/03-testing-and-verification.md)
+Amounts are summed as integer cents. Existing `moneyMapData` transactions preserve their IDs and amounts; legacy category budgets remain a default until a month-specific plan is saved. An unreadable workspace offers a download/recovery flow rather than replacing saved data. A backup is validated before it replaces current records.
 
-## Deployment
+## Development and verification
 
-- **GitHub Pages (verified live):** https://taksh1507.github.io/MoneyMap-Finance-Tracker/ — pushes to `main` trigger the automatic pages build.
-- Any static host works (Vercel/Netlify) since there is no build step; set the publish directory to the repository root.
-
-## Implementation Status
-
-- ✅ Dashboard, transactions, budgets, charts, PDF/CSV export, 30-day forecast — implemented and verified
-- ✅ Responsive layout (mobile + desktop)
-- ⚠️ Authentication — client-side mock only (intentional scope)
-
-## Known Limitations
-
-1. **No real backend** — data lives in the browser's localStorage; clearing browser data erases it (by design, documented, not a defect).
-2. **Mock auth** — sign-up never persists passwords; do not use with real credentials.
-3. **No automated tests** — verification is manual/scripted at runtime level; a Playwright suite is the natural next step.
-4. **CDN-only third parties** — Chart.js/jsPDF/html2canvas load from CDN; offline usage needs vendoring.
-
-## Future Improvements
-
-- Real authentication with a lightweight backend (e.g., Supabase/Firebase) and cloud sync
-- Export/import for full data portability (JSON backup/restore)
-- Recurring transactions and monthly rollover
-- Playwright end-to-end tests for the add/edit/delete flows
-
-## Technical Documentation
-
-- [Project overview](docs/01-project-overview.md)
-- [Architecture](docs/02-architecture.md)
-- [Testing & verification](docs/03-testing-and-verification.md)
-
-## License
-
-Released under the [MIT License](LICENSE).
-
-## Regression tests and audit evidence
-
-Use Node.js 22 or newer:
+Use Node.js 22+ and Python 3:
 
 ```bash
-node --test tests/*.test.mjs
-python -m http.server 8765 --bind 127.0.0.1
+npm ci --ignore-scripts
+npm run check
+npm test
+npx playwright install chromium
+npm run test:e2e
 ```
 
-Open `http://127.0.0.1:8765/html/financetracker.html`. Editing preserves the saved
-transaction until **Save Changes**. The tracker uses local copies of Chart.js,
-jsPDF and html2canvas; their license headers and download sources are in
-`js/vendor/`. Dependency security upgrades remain outstanding.
+To use a system browser, set `PLAYWRIGHT_CHROMIUM_EXECUTABLE` to its path. The test runner starts a local static server automatically. Browser tests cover desktop, tablet, and mobile workflows, persistence, migration, restore, reports, keyboard interactions, and automated accessibility checks. See [verification](docs/03-testing-and-verification.md).
 
-See `docs/audits/` for actual test results, remaining risks, and verified desktop
-and mobile screenshots. Sign-in is a local demo, not an authentication boundary;
-records share browser storage and are not encrypted.
+[Project overview](docs/01-project-overview.md) · [Architecture](docs/02-architecture.md) · [MIT license](LICENSE)
+
+MoneyMap provides personal tracking tools, not financial advice or bank synchronization. Browser data is local to this site and profile; deleting browser data removes the workspace. Keep a backup somewhere you control.
